@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Busca Personalizada</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 12px;
+      border: none;
+      border-radius: 20px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #2575fc;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background-color: #6a11cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Busca Personalizada</h1>
+    <input type="text" id="searchQuery" placeholder="Digite algo para buscar...">
+    <button onclick="searchGoogle()">Buscar</button>
+  </div>
+
+  <script>
+    function searchGoogle() {
+      const query = document.getElementById('searchQuery').value;
+      if (!query) {
+        alert('Por favor, digite algo para buscar.');
+        return;
+      }
+      // Redireciona para a página de resultados passando a consulta como parâmetro na URL
+      window.location.href = `resultados.html?q=${encodeURIComponent(query)}`;
+    }
+  </script>
+</body>
+</html>
