@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca Personalizada</title>
+  <title>UnifyHub</title>
   <style>
     * {
       margin: 0;
@@ -12,14 +12,15 @@
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
-      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      overflow: hidden;
     }
 
     .container {
@@ -27,14 +28,17 @@
       max-width: 600px;
       width: 90%;
       background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
+      padding: 40px;
+      border-radius: 12px;
       box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+      opacity: 0; /* Inicia invisível para animação */
     }
 
     h1 {
       margin-bottom: 20px;
       font-size: 2rem;
+      color: #1e90ff;
+      opacity: 0; /* Inicia invisível para animação */
     }
 
     input[type="text"] {
@@ -44,32 +48,44 @@
       border-radius: 20px;
       font-size: 16px;
       outline: none;
+      margin-bottom: 15px;
+      opacity: 0; /* Inicia invisível para animação */
     }
 
     button {
-      margin-top: 15px;
       padding: 10px 20px;
       font-size: 16px;
       color: #fff;
-      background-color: #2575fc;
+      background-color: #1e90ff;
       border: none;
       border-radius: 20px;
       cursor: pointer;
       transition: all 0.3s;
+      opacity: 0; /* Inicia invisível para animação */
     }
 
     button:hover {
-      background-color: #6a11cb;
+      background-color: #1c86ee;
+      transform: scale(1.05); /* Efeito de pulsação */
+    }
+
+    .welcome-message {
+      font-size: 1.5rem;
+      color: #b0c4de;
+      margin-bottom: 30px;
+      opacity: 0; /* Inicia invisível para animação */
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Busca Personalizada</h1>
+    <div class="welcome-message">Bem-vindo ao UnifyHub</div>
+    <h1>Explore o Universo da Web</h1>
     <input type="text" id="searchQuery" placeholder="Digite algo para buscar...">
     <button onclick="searchGoogle()">Buscar</button>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
   <script>
     function searchGoogle() {
       const query = document.getElementById('searchQuery').value;
@@ -77,9 +93,17 @@
         alert('Por favor, digite algo para buscar.');
         return;
       }
-      // Redireciona para a página de resultados passando a consulta como parâmetro na URL
       window.location.href = `resultados.html?q=${encodeURIComponent(query)}`;
     }
+
+    // Animações com GSAP
+    window.onload = function() {
+      gsap.to('.welcome-message', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out" });
+      gsap.to('h1', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 0.5 });
+      gsap.to('input[type="text"]', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 1 });
+      gsap.to('button', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 1.5 });
+      gsap.to('.container', { duration: 1.5, opacity: 1, ease: "power3.out", delay: 0.5 });
+    };
   </script>
 </body>
 </html>
