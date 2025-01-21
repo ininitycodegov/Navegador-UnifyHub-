@@ -14,7 +14,7 @@
     body {
       font-family: 'Roboto', sans-serif;
       color: #e0e0e0;
-      background-color: #121212;
+      background-color: #000000;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -27,8 +27,22 @@
       width: 100%;
       max-width: 1200px;
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
+      align-items: center;
       padding: 10px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #1e90ff;
+      margin-right: 5px;
     }
 
     .container {
@@ -189,8 +203,8 @@
 
     .close-btn {
       position: absolute;
-      top: 4px; /* Ajustado para 4px */
-      right: 4px; /* Ajustado para 4px */
+      top: 0px; /* Ajustado para 4px */
+      right: 0px; /* Ajustado para 4px */
       background: none;
       border: none;
       color: white;
@@ -201,6 +215,10 @@
 </head>
 <body>
   <div class="header">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Digite sua pesquisa...">
+      <button id="searchButton">Pesquisar</button>
+    </div>
     <button id="indexConfigButton">Configuração de Indexação</button>
   </div>
 
@@ -211,12 +229,13 @@
   <div class="footer">
     <button id="webButton">Web</button>
     <button id="imageButton">Imagem</button>
+    <button id="videoButton">Vídeo</button>
   </div>
 
   <div class="overlay" id="configOverlay">
     <div class="modal">
       <button class="close-btn" onclick="closeModal()">×</button>
-      <h2>O que você quer indexar?</h2>
+      <h1>O que você quer indexar?</h1>
       <button onclick="setIndexing('leve')">Conteúdo Leve</button>
       <button onclick="setIndexing('moderado')">Conteúdo Moderado</button>
       <button onclick="setIndexing('pesado')">Conteúdo Pesado</button>
@@ -229,10 +248,17 @@
     const SEARCH_ENGINE_ID = 'c233b1197c03041d3';
     let selectedIndexing = 'leve'; // Default level
 
+    document.getElementById('searchButton').addEventListener('click', () => {
+      const userInput = document.getElementById('searchInput').value;
+      if (userInput) {
+        window.location.search = `?q=${encodeURIComponent(userInput)}`;
+      }
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const query = urlParams.get('q');
 
-    function enrichQuery(originalQuery) {
+    function enrichQuery(originalQuery, type = '') {
       let additionalKeywords = "";
       if (selectedIndexing === 'leve') {
         additionalKeywords = ""; // Permite qualquer pesquisa
@@ -240,6 +266,9 @@
         additionalKeywords = "memes, shitpost, e-girl, adulto, NSFW";
       } else if (selectedIndexing === 'pesado') {
         additionalKeywords = "adulto, Porn, pornográfico, xxx, erótico, NSFW, nudez, Estrupo";
+      }
+      if (type === 'video') {
+        additionalKeywords += " video";
       }
       return `${originalQuery} ${additionalKeywords}`;
     }
@@ -278,7 +307,6 @@
           resultDiv.classList.add('result-item');
 
           const lastUpdated = item.pagemap?.metatags?.['article:published_time'] || 'Data não disponível';
-
           resultDiv.innerHTML = `
             <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
             <p>${item.snippet}</p>
@@ -321,11 +349,45 @@
       }
     }
 
+    async function searchGoogleVideos() {
+      const resultsContainer = document.getElementById('results');
+      resultsContainer.innerHTML = '';
+
+      if (!query) {
+        resultsContainer.innerHTML = '<p>Não foi possível encontrar a consulta.</p>';
+        return;
+      }
+
+      const enrichedQuery = enrichQuery(query, 'video');
+      const apiURL = `https://www.googleapis.com/customsearch/v1?key=${API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(enrichedQuery)}&safe=off`;
+
+      const items = await fetchResults(apiURL);
+      if (items.length > 0) {
+        items.forEach(item => {
+          const resultDiv = document.createElement('div');
+          resultDiv.classList.add('result-item');
+
+          // Use links diretos para vídeos
+          resultDiv.innerHTML = `
+            <h3><a href="${item.link}" target="_blank">${item.title}</a></h3>
+            <a href="${item.link}" target="_blank">
+              <p>${item.snippet}</p>
+            </a>
+          `;
+          resultsContainer.appendChild(resultDiv);
+        });
+      } else {
+        resultsContainer.innerHTML = '<p>Nenhum resultado de vídeo encontrado.</p>';
+      }
+    }
+
     function toggleView(type) {
       if (type === 'image') {
         searchGoogleImages();
       } else if (type === 'web') {
         searchGoogleWeb();
+      } else if (type === 'video') {
+        searchGoogleVideos();
       }
     }
 
@@ -347,6 +409,7 @@
 
     document.getElementById('imageButton').addEventListener('click', () => toggleView('image'));
     document.getElementById('webButton').addEventListener('click', () => toggleView('web'));
+    document.getElementById('videoButton').addEventListener('click', () => toggleView('video'));
     document.getElementById('indexConfigButton').addEventListener('click', openModal);
 
     // Inicia a busca na web por padrão
