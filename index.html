@@ -23,16 +23,18 @@
       overflow: hidden;
     }
     
-    video {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -5;
+body {
+  font-family: 'Roboto', sans-serif;
+  background: url('https://wallpapers.com/images/high/beautiful-stars-in-outer-space-dricwi4ulf0p6lkl.webp') no-repeat center center fixed;
+  background-size: cover;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  overflow: hidden;
 }
-
     .container {
       text-align: center;
       max-width: 600px;
@@ -89,9 +91,7 @@
 </head>
 <body>
   
-    <video autoplay loop muted>
-    <source src="https://videos.pexels.com/video-files/30575359/13093392_2160_3242_30fps.mp4" type="video/mp4">
-  </video>
+    
   
   <div class="container">
     <div class="welcome-message">Bem-vindo ao UnifyHub</div>
