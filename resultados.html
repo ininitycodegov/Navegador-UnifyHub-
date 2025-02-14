@@ -34,7 +34,7 @@
       background-image: url('https://raw.githubusercontent.com/InfinityCodeGov/Navegador-UnifyHub-/refs/heads/main/226761_original_4320x7680_1716087322.jpg');
       background-size: cover;
       background-position: center;
-      z-index: -1; /* Ajuste para garantir que o fundo fique atrás de todos os elementos */
+      z-index: -1;
     }
 
     .header, .container, .footer {
@@ -105,20 +105,33 @@
     }
 
     .result-item {
-      background: #000;
+      background: linear-gradient(90deg, #000, #333, #000);
+      background-size: 300% 300%;
+      animation: gradientMove 5s ease infinite, fadeIn 1s ease-out;
       padding: 15px;
       border-radius: 8px;
       word-wrap: break-word;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s, box-shadow 0.5s;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .result-item:hover {
       transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.10);
+      box-shadow: 0 6px 12px rgba(255, 255, 255, 0.1);
     }
 
     .result-item h3 {
@@ -141,7 +154,7 @@
     .result-item p {
       font-size: 0.9rem;
       margin: 10px 0;
-      color: #555;
+      color: #bbb;
     }
 
     .result-item img {
@@ -151,6 +164,11 @@
       margin-top: 10px;
       max-height: 150px;
       object-fit: cover;
+      transition: transform 0.3s;
+    }
+
+    .result-item img:hover {
+      transform: scale(1.05);
     }
 
     .result-item .updated {
@@ -164,12 +182,13 @@
       bottom: 0;
       left: 0;
       width: 100%;
-      background-color: #000;
       display: flex;
       justify-content: space-around;
       align-items: center;
       padding: 10px 0;
-      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(90deg, #000, #333, #000);
+      background-size: 300% 300%;
+      animation: gradientMove 5s ease infinite;
     }
 
     .footer img {
