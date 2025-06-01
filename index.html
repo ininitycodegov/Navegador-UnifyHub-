@@ -1,124 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navegador UnifyHub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UnifyHub</title>
+  <link rel="manifest" href="manifest.json" />
+
   <style>
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #000000;
-      color: #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 90vh;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
     }
-    
-body {
-  font-family: 'Roboto', sans-serif;
-  background: url('https://raw.githubusercontent.com/InfinityCodeGov/Navegador-UnifyHub-/refs/heads/main/266999_original_4320x7680_1739453389.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: #e0e0e0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 90vh;
-  overflow: hidden;
-}
-    .container {
-      text-align: center;
-      max-width: 600px;
-      width: 90%;
-      background: rgba(0, 0, 0, 0.8);
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-      opacity: 0; /* Inicia invisível para animação */
-    }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 2rem;
-      color: #1e90ff;
-      opacity: 0; /* Inicia invisível para animação */
-    }
-
-    input[type="text"] {
-      width: 80%;
-      padding: 12px;
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
       border: none;
-      border-radius: 20px;
-      font-size: 16px;
-      outline: none;
-      margin-bottom: 15px;
-      opacity: 0; /* Inicia invisível para animação */
     }
 
-    button {
+    #installBanner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #252624;
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+      z-index: 1000;
+      font-family: sans-serif;
+      text-align: center;
+    }
+
+    #installBanner h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    #installBanner button {
+      margin: 0 10px;
       padding: 10px 20px;
       font-size: 16px;
-      color: #fff;
-      background-color: #1e90ff;
       border: none;
-      border-radius: 20px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.3s;
-      opacity: 0; /* Inicia invisível para animação */
     }
 
-    button:hover {
-      background-color: #1c86ee;
-      transform: scale(1.05); /* Efeito de pulsação */
+    #installButton {
+      background-color: #61a183;
+      color: white;
     }
 
-    .welcome-message {
-      font-size: 1.5rem;
-      color: #b0c4de;
-      margin-bottom: 30px;
-      opacity: 0; /* Inicia invisível para animação */
+    #closeBanner {
+      background-color: #555;
+      color: white;
     }
   </style>
 </head>
 <body>
-  
-    
-  
-  <div class="container">
-    <div class="welcome-message">Bem-vindo ao UnifyHub</div>
-    <h1>Explore o Universo da Web</h1>
-    <input type="text" id="searchQuery" placeholder="Digite algo para buscar...">
-    <button onclick="searchGoogle()">Buscar</button>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
-  <script>
-    function searchGoogle() {
-      const query = document.getElementById('searchQuery').value;
-      if (!query) {
-        alert('Por favor, digite algo para buscar.');
-        return;
-      }
-      window.location.href = `resultados.html?q=${encodeURIComponent(query)}`;
+<iframe id="tela" src="tela.html"></iframe>
+
+<div id="installBanner">
+  <h2>Deseja instalar o aplicativo EcoProf?</h2>
+  <button id="installButton">Instalar</button>
+  <button id="closeBanner">Agora não</button>
+</div>
+
+<script>
+let deferredPrompt;
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => {
+      console.log('PWA: Service Worker registrado com sucesso!');
+    })
+    .catch(error => {
+      console.error('PWA: Erro ao registrar o Service Worker:', error);
+    });
+}
+
+function atualizarTela() {
+  const iframe = document.getElementById('tela');
+  if (navigator.onLine) {
+    iframe.src = "tela.html";
+  } else {
+    iframe.src = "sem-conexao.html";
+  }
+}
+
+window.addEventListener('online', atualizarTela);
+window.addEventListener('offline', atualizarTela);
+atualizarTela();
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'block';
+});
+
+document.getElementById('installButton').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('PWA: Aplicativo instalado!');
+    } else {
+      console.log('PWA: Instalação recusada.');
     }
+    document.getElementById('installBanner').style.display = 'none';
+    deferredPrompt = null;
+  }
+});
 
-    // Animações com GSAP
-    window.onload = function() {
-      gsap.to('.welcome-message', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out" });
-      gsap.to('h1', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 0.5 });
-      gsap.to('input[type="text"]', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 1 });
-      gsap.to('button', { duration: 1.5, opacity: 1, y: -10, ease: "power3.out", delay: 1.5 });
-      gsap.to('.container', { duration: 1.5, opacity: 1, ease: "power3.out", delay: 0.5 });
-    };
-  </script>
+document.getElementById('closeBanner').addEventListener('click', () => {
+  document.getElementById('installBanner').style.display = 'none';
+});
+</script>
+
 </body>
 </html>
